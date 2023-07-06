@@ -1,9 +1,33 @@
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: template-repository
-Source: https://github.com/deepin-community/template-repository
+Upstream-Name: ktx
+Source: https://github.com/QW-Group/ktx.git
+Files-Excluded:
+    tools/q3lcc/*
 
 Files: *
-Copyright: 2023 Tsic404 <liuheng@deepin.org>
+Copyright: 1996-2000 id Software Inc.
+           2004-2008 Andrew Grondalski <ult@qw-dev.net>
+           2005-2007 Dmitry Musatov <disconnect@qw-dev.net>
+           2005-2020 Vladimir Vladimirovich <vvd@pochta.ru>
+           2005-2022 Ivan Bolsunov <ivan.bolsunov@gmail.com>
+           2006      Dominic Evans <oldman@qw-dev.net>
+           2007-2009 Anton Gavrilov <zquake@gmail.com>
+           2007-2022 Alexandre Nizoux <alexandre@nizoux.fr>
+           2008-2011 Tero Parkkonen <renzo@quakeworld.fi>
+           2014      Jonny Svärd
+           2015      Paul Klumpp <paul@klumpp.net>
+           2016-2021 Peter Nicol <meag@acm.org>
+           2017-2021 Florian Zwoch <fzwoch@gmail.com>
+           2017      Michał Sochoń <michal.sochon@xstream.net>
+           2020-2022 Tamas Csabina <tcsabina@yahoo.com>
+           2022      Daniel Svensson <dsvensson@gmail.com>
+           2022      QW Group <qw.dev.group@gmail.com>
+License: GPL-2+
+
+Files: debian/*
+Copyright: 2019-2022 Lee Garrett <debian@rocketjump.eu>
+License: GPL-2+
+
 License: GPL-2+
  This package is free software; you can redistribute it and/or modify
  it under the terms of the GNU General Public License as published by

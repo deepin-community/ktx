@@ -1,5 +1,21 @@
-template-repository (1.0-1) unstable; urgency=medium
+ktx (1.42+dfsg-3) unstable; urgency=medium
 
-  * Initial release
+  * Update watch file
+  * Bump Standards-Version (no changes needed)
+  * Build on all architectures again
+  * Add dep3 header to Debian patch
 
- -- Tsic404 <liuheng@deepin.org>  Sat, 28 Jan 2023 13:46:49 +0800
+ -- Lee Garrett <debian@rocketjump.eu>  Fri, 27 Jan 2023 13:50:42 +0100
+
+ktx (1.42+dfsg-2) unstable; urgency=high
+
+  * Build only for amd64 for now (Closes: #1021797)
+
+ -- Lee Garrett <debian@rocketjump.eu>  Mon, 02 Jan 2023 20:10:27 +0100
+
+ktx (1.42+dfsg-1) unstable; urgency=medium
+
+  * Initial release (Closes: #1018955)
+  * Exclude DFSG-incompatible q3lcc
+
+ -- Lee Garrett <debian@rocketjump.eu>  Sun, 27 Nov 2022 16:20:29 +0100

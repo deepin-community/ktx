@@ -1,0 +1,13 @@
+obj-${DEB_TARGET_GNU_TYPE}/qwprogs.so      /usr/lib/quakeworld/ktx/
+resources/example-configs/ktx/bots         /usr/share/games/quake/ktx/
+resources/example-configs/ktx/configs      /usr/share/games/quake/ktx/
+resources/example-configs/ktx/progs        /usr/share/games/quake/ktx/
+resources/example-configs/ktx/race         /usr/share/games/quake/ktx/
+resources/example-configs/ktx/sound        /usr/share/games/quake/ktx/
+
+resources/example-configs/ktx/ktx.cfg      /usr/share/games/quake/ktx/
+resources/example-configs/ktx/listip.cfg   /usr/share/games/quake/ktx/
+resources/example-configs/ktx/mvdsv.cfg    /usr/share/games/quake/ktx/
+resources/example-configs/ktx/pwd.cfg      /usr/share/games/quake/ktx/
+resources/example-configs/ktx/server.cfg   /usr/share/games/quake/ktx/
+resources/example-configs/ktx/vip_ip.cfg   /usr/share/games/quake/ktx/

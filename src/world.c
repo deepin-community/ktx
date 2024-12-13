@@ -29,21 +29,21 @@
 #endif
 
 void RegisterSkillVariables(void);
-void SUB_regen();
-void CheckAll();
-void FixSpecWizards();
-void FixSayFloodProtect();
-void FixRules();
-void ShowSpawnPoints();
-void r_route();
+void SUB_regen(void);
+void CheckAll(void);
+void FixSpecWizards(void);
+void FixSayFloodProtect(void);
+void FixRules(void);
+void ShowSpawnPoints(void);
+void r_route(void);
 void LoadMap(void);
-void SP_trigger_custom_push();
+void SP_trigger_custom_push(void);
 
 #define MAX_BODYQUE 4
 gedict_t *bodyque[MAX_BODYQUE];
 int bodyque_head;
 
-void InitBodyQue()
+void InitBodyQue(void)
 {
 	int i;
 
@@ -89,7 +89,7 @@ void CopyToBodyQue(gedict_t *ent)
 	}
 }
 
-void ClearBodyQue()
+void ClearBodyQue(void)
 {
 	int i;
 
@@ -104,7 +104,7 @@ void ClearBodyQue()
 	bodyque_head = 0;
 }
 
-void CheckDefMap()
+void CheckDefMap(void)
 {
 	int player_count = CountPlayers();
 	int bot_count = CountBots();
@@ -151,7 +151,7 @@ void Spawn_DefMapChecker(float timeout)
 
 float max_map_uptime = 3600 * 12; // 12 hours
 
-void Check_LongMapUptime()
+void Check_LongMapUptime(void)
 {
 	if (match_in_progress)
 	{
@@ -177,9 +177,9 @@ void Check_LongMapUptime()
 	changelevel(mapname);
 }
 
-void SP_item_artifact_super_damage();
+void SP_item_artifact_super_damage(void);
 
-void SP_worldspawn()
+void SP_worldspawn(void)
 {
 	char *s;
 
@@ -563,8 +563,8 @@ void SP_worldspawn()
 	}
 }
 
-void ShowSpawnPoints();
-void Customize_Maps()
+void ShowSpawnPoints(void);
+void Customize_Maps(void)
 {
 	gedict_t *p;
 
@@ -752,7 +752,7 @@ qbool RegisterCvar(const char *var)
 }
 
 // in the first frame - even world is not spawned yet
-void FirstFrame()
+void FirstFrame(void)
 {
 	int i, um_idx;
 	qbool matchless_was_forced = false;
@@ -821,6 +821,7 @@ void FirstFrame()
 	RegisterCvar("k_vp_nospecs"); // votes percentage for nospecs voting
 	RegisterCvar("k_vp_teamoverlay"); // votes percentage for teamoverlay voting
 	RegisterCvar("k_vp_coop");    // votes percentage for coop voting
+	RegisterCvar("k_vp_hookstyle"); // votes percentage for hookstyle voting
 	RegisterCvar("k_vp_antilag"); // votes percentage for antilag voting
 	RegisterCvar("k_no_vote_map"); // dis allow map voting in matcless mode, also disallow /next_map
 	RegisterCvar("k_vp_privategame"); // temporarily force logins on the server
@@ -875,8 +876,27 @@ void FirstFrame()
 	RegisterCvarEx("k_hoonymode_prevmap", "");
 	RegisterCvarEx("k_hoonymode_prevspawns", "");
 // }
+// { freshteams dmm1
+	RegisterCvarEx("k_freshteams", "0");
+	RegisterCvarEx("k_freshteams_weapon_time", "20");
+	RegisterCvarEx("k_freshteams_fast_ammo", "0");			// ammo spawn times match weapons
+	RegisterCvarEx("k_freshteams_limit_packs", "1");		// limit ammo in packs
+	RegisterCvarEx("k_freshteams_pack_shells", "20");		// max shells in droppacks
+	RegisterCvarEx("k_freshteams_pack_nails", "30");		// max nails in droppacks
+	RegisterCvarEx("k_freshteams_pack_rockets", "5");		// max rockets in droppacks
+	RegisterCvarEx("k_freshteams_pack_cells", "10");		// max cells in droppacks
+	RegisterCvarEx("k_freshteams_limit_sweep_ammo", "1");	// limit ammo gained when sweeping a weapon
+	RegisterCvarEx("k_freshteams_sweep_ng_ammo", "6");
+	RegisterCvarEx("k_freshteams_sweep_ssg_ammo", "1");
+	RegisterCvarEx("k_freshteams_sweep_sng_ammo", "6");
+	RegisterCvarEx("k_freshteams_sweep_gl_ammo", "1");
+	RegisterCvarEx("k_freshteams_sweep_rl_ammo", "1");
+	RegisterCvarEx("k_freshteams_sweep_lg_ammo", "3");
+	RegisterCvarEx("k_nosweep", "0");						// can't pick up weapons you already have in dmm1
+// }
 // { race
 	RegisterCvarEx("k_race", "0");
+	RegisterCvarEx("k_race_countdown", "2");
 	RegisterCvarEx("k_race_custom_models", "0");
 	RegisterCvarEx("k_race_autorecord", "1");
 	RegisterCvarEx("k_race_times_per_port", "0");
@@ -917,8 +937,9 @@ void FirstFrame()
 //{ ctf
 	RegisterCvar("k_ctf_custom_models");
 	RegisterCvar("k_ctf_hook");
-	RegisterCvar("k_ctf_cr_hook"); // toggle for clan-ring style hook
+	RegisterCvar("k_ctf_hookstyle"); // loop through hookstyle settings
 	RegisterCvar("k_ctf_runes");
+	RegisterCvarEx("k_ctf_rune_bounce", "3");
 	RegisterCvarEx("k_ctf_rune_power_str", "2.0");
 	RegisterCvarEx("k_ctf_rune_power_res", "2.0");
 	RegisterCvarEx("k_ctf_rune_power_rgn", "2.0");
@@ -1023,6 +1044,10 @@ void FirstFrame()
 	RegisterCvarEx(FB_CVAR_DEBUG, "0");
 	RegisterCvarEx(FB_CVAR_ADMIN_ONLY, "0");
 	RegisterCvarEx(FB_CVAR_FREEZE_PREWAR, "0");
+	RegisterCvarEx(FB_CVAR_HEALTH, "100");
+	RegisterCvarEx(FB_CVAR_WEAPON, "2");
+	RegisterCvarEx(FB_CVAR_BREAK_ON_DEATH, "1");
+	RegisterCvarEx(FB_CVAR_QUAD_MULTIPLIER, "4");
 
 	for (i = 0; i < MAX_CLIENTS; i++)
 	{
@@ -1038,6 +1063,7 @@ void FirstFrame()
 	RegisterCvar("k_no_scoreboard_ghosts");
 
 	RegisterCvar("k_lgcmode");
+	RegisterCvar("k_tot_mode");
 
 	// private games
 	RegisterCvarEx("k_privategame", "0");                 // whether it is currently on or off
@@ -1120,7 +1146,7 @@ void FirstFrame()
 }
 
 // items spawned, but probably not solid yet
-void SecondFrame()
+void SecondFrame(void)
 {
 	if (framecount != 2)
 	{
@@ -1134,7 +1160,7 @@ void SecondFrame()
 	HM_restore_spawns();
 }
 
-void CheckSvUnlock()
+void CheckSvUnlock(void)
 {
 	if (k_sv_locktime && (k_sv_locktime < g_globalvars.time))
 	{
@@ -1213,7 +1239,7 @@ void CheckAutoXonX(qbool use_time)
 }
 
 // called when switching to/from ctf mode.
-void FixCTFItems()
+void FixCTFItems(void)
 {
 	static gameType_t old_k_mode = 0;	// static
 	static int k_ctf_runes = 0;			// static
@@ -1260,7 +1286,7 @@ void FixCTFItems()
 	k_ctf_hook = cvar("k_ctf_hook");
 }
 
-void FixRA()
+void FixRA(void)
 {
 	static qbool old_k_rocketarena = false;	// static
 
@@ -1285,7 +1311,7 @@ void FixRA()
 	}
 }
 
-void FixRace()
+void FixRace(void)
 {
 	static qbool old_k_race = false;	// static
 
@@ -1311,7 +1337,7 @@ void FixRace()
 }
 
 // serve k_pow and k_pow_min_players
-void FixPowerups()
+void FixPowerups(void)
 {
 	static int k_pow = -1; // static
 	static int k_pow_q = -1; // static
@@ -1380,7 +1406,7 @@ void FixPowerups()
 	}
 }
 
-void FixCmdFloodProtect()
+void FixCmdFloodProtect(void)
 {
 	k_cmd_fp_count = bound(0, cvar("k_cmd_fp_count"), MAX_FP_CMDS);
 	k_cmd_fp_count = (k_cmd_fp_count ? k_cmd_fp_count : min(10, MAX_FP_CMDS));
@@ -1394,7 +1420,7 @@ void FixCmdFloodProtect()
 	k_cmd_fp_disabled = bound(0, cvar("k_cmd_fp_disabled"), 1);
 }
 
-void FixSayTeamToSpecs()
+void FixSayTeamToSpecs(void)
 {
 	int k_sayteam_to_spec = bound(0, cvar("k_sayteam_to_spec"), 3);
 	int current_value = cvar("sv_sayteam_to_spec");
@@ -1430,7 +1456,7 @@ void FixSayTeamToSpecs()
 // Format is: mode-submode[-submode]
 void SetMode4ServerInfo(void)
 {
-	char mode[64] = {};
+	char mode[64] = "";
 	const char *strCurrentUmode;
 
 	// The parameter is (current_umode-1), because the UserModes_t enum has `umUnknown` as first element,
@@ -1502,9 +1528,9 @@ void SetMode4ServerInfo(void)
 int skip_fixrules = 0;
 
 // check if server is misconfigured somehow, made some minimum fixage
-void FixRules()
+void FixRules(void)
 {
-	extern void FixYawnMode();
+	extern void FixYawnMode(void);
 
 	gameType_t km = k_mode = cvar("k_mode");
 	int k_tt = bound(0, cvar("k_timetop"), 600);
@@ -1723,6 +1749,16 @@ void FixRules()
 		cvar_fset("k_instagib", 0); // instagib only in dmm4
 	}
 
+	if (cvar("k_freshteams") && deathmatch != 1)
+	{
+		cvar_fset("k_freshteams", 0); // freshteams only in dmm1
+	}
+
+	if (cvar("k_nosweep") && deathmatch != 1)
+	{
+		cvar_fset("k_nosweep", 0); // nosweep only in dmm1
+	}
+
 	// ok, broadcast changes if any, a bit tech info, but this is misconfigured server
 	// and must not happen on well configured servers, k?
 	if (km != k_mode)
@@ -1768,9 +1804,10 @@ int timelimit, fraglimit, teamplay, deathmatch, framecount, coop, skill;
 
 extern float intermission_exittime;
 
-void CheckTiming();
-void check_fcheck();
-void CheckTeamStatus();
+void CheckTiming(void);
+void check_fcheck(void);
+void CheckTeamStatus(void);
+void SendSpecInfo(void);
 void DoMVDAutoTrack(void);
 
 void FixNoSpecs(void);
@@ -1856,4 +1893,29 @@ void StartFrame(int time)
 	check_fcheck();
 
 	TeamplayGameTick();
+
+	WillPause();
+}
+
+// Check the same spawnflags as items only visible in DM for monsters as well.
+// 1. Disabled for all SP modes
+// 2. Not disabled for DM
+qbool AllowMonster(gedict_t *e)
+{
+	if (!deathmatch)
+	{
+		return true;
+	}
+
+	if (((int) e->s.v.spawnflags & SPAWNFLAG_NOT_SP) != SPAWNFLAG_NOT_SP)
+	{
+		return false;
+	}
+
+	if (((int) e->s.v.spawnflags & SPAWNFLAG_NOT_DEATHMATCH) == SPAWNFLAG_NOT_DEATHMATCH)
+	{
+		return false;
+	}
+
+	return true;
 }

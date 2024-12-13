@@ -39,11 +39,11 @@ typedef struct shared_edict_s
 } edict_t;
 
 struct gedict_s;
-typedef void (*th_die_funcref_t)();
+typedef void (*th_die_funcref_t)(void);
 typedef void (*th_pain_funcref_t)(struct gedict_s*, float);
 
 // { SP
-typedef void (*th_sp_funcref_t)();
+typedef void (*th_sp_funcref_t)(void);
 // }
 
 typedef enum
@@ -226,6 +226,10 @@ typedef struct vote_s
 	int teamoverlay;
 	int nospecs;
 	int coop;
+	int hooksmooth;
+	int hookfast;
+	int hookclassic;
+	int hookcrhook;
 	int antilag;
 	int privategame;
 	//int kick_unauthed;
@@ -818,7 +822,7 @@ typedef struct gedict_s
 //
 	float cnt;								// misc flag
 
-	void (*think1)();						//calcmove
+	void (*think1)(void);						//calcmove
 	vec3_t finaldest;
 //combat
 	float dmg;
@@ -993,11 +997,10 @@ typedef struct gedict_s
 
 // { CTF
 	struct gedict_s *hook;					// grapple
-	qbool ctf_sound;						// sound stuff
-	qbool on_hook;							// are we on the grapple?
-	qbool hook_out;							// is the grapple in flight?
-	int ctf_flag;							// do we have a rune or flag?
-	float regen_time;						// time to update health if regen rune
+	qbool on_hook;						// are we on the grapple?
+	qbool hook_out;						// is the grapple in flight?
+	int ctf_flag;						// do we have a rune or flag?
+	float regen_time;					// time to update health if regen rune
 	float rune_sound_time;					// dont spam rune sounds (1 per second)
 	float carrier_frag_time;				// used for carrier assists
 	float return_flag_time;					// used for flag return assists
@@ -1005,8 +1008,12 @@ typedef struct gedict_s
 	float carrier_hurt_time;				// time we last hurt enemy carrier
 	float rune_pickup_time;					// time we picked up current rune
 	float hook_damage_time;					// manage dps dealt to hooked enemies
-	char *last_rune;						// name of last rune we send to client
-	float items2;							// using  ZQ_ITEMS2 extension in mvdsv we can use per client sigils for runes
+	float hook_cancel_time;					// delay cancel on throw with smooth hook
+	float hook_reset_time;					// marker for grapple reset (decoupled from `attack_finished`)
+	float hook_pullspeed;					// accelerate grapple velocity
+	float hook_pullspeed_accel;				// number by which to increment velocity
+	char *last_rune;					// name of last rune we send to client
+	float items2;						// using  ZQ_ITEMS2 extension in mvdsv we can use per client sigils for runes
 
 //
 // TF -- well, we does not support TF but require it for loading TF map as CTF map.
@@ -1063,6 +1070,7 @@ typedef struct gedict_s
 	float alive_time;						// number of seconds player is in play
 	float time_of_respawn;					// server time player respawned or round started
 	float seconds_to_respawn;				// number of seconds until respawn
+	float escape_time;						// number of seconds after "escaping"
 	char *teamcolor;						// color of player's team
 	char cptext[100];						// centerprint for player
 	int ca_ammo_grenades;					// grenade ammo
@@ -1193,6 +1201,33 @@ typedef struct gedict_s
 
 // {
 	qbool spawn_effect_queued;
+// }
+
+// { hiprot fields
+	int rotate_type;                        // internal, rotate(0), movewall(1), setorigin(2), see hiprot.c
+	vec3_t neworigin;                       // internal, origin tracking
+	vec3_t rotate;                          // rotation angle
+	vec3_t finalangle;                      // normalized version of 'angles'
+	float endtime;                          // internal, animation tracking
+	float duration;                         // internal, animation tracking
+	string_t group;                         // linking of rotating brushes
+	string_t path;                          // from ent field 'target', as 'path' to mirror original source
+	string_t event;                         // events that may happen at path corners
+// }
+
+// { func_bob
+	float distance;                         // distance between vantage points
+	float waitmin;                          // speed-up factor, >0, see func_bob.c for defaults
+	float waitmin2;                         // slowdown factor, >0, see func_bob.c for defaults
+// }
+
+// { ambient_general
+	float volume;                           // attenuation, see misc.c for defaults
+// }
+
+// { trigger_heal
+	float healmax;                          // maximum health see triggers.c for defaults
+	float healtimer;                        // internal timer for tracking health replenishment interval
 // }
 } gedict_t;
 

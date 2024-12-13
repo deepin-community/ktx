@@ -449,6 +449,13 @@ void T_Damage(gedict_t *targ, gedict_t *inflictor, gedict_t *attacker, float dam
 	float playerheight = 0, midheight = 0;
 	qbool midair = false, inwater = false, do_dmg = false, rl_dmg = false, stomp_dmg = false;
 
+	// used by buttons and triggers to set activator for target firing
+	damage_attacker = attacker;
+	damage_inflictor = inflictor;
+
+	attackerteam = getteam(attacker);
+	targteam = getteam(targ);
+
 	// can't apply damage to dead
 	if (!targ->s.v.takedamage || ISDEAD(targ))
 	{
@@ -483,19 +490,25 @@ void T_Damage(gedict_t *targ, gedict_t *inflictor, gedict_t *attacker, float dam
 			}
 		}
 		
-		// don't accept any damage in CA modes if no_pain is true (ie during respawn in wipeout)
-		if (targ->no_pain)
-		{
-			tp4teamdmg = true; // don't take damage but still get stopped/bounced by weapon fire
+		// don't accept any damage in CA modes if no_pain is true 
+		if ((targ->no_pain || (attacker->no_pain && attacker->in_play)) && (match_in_progress == 2))
+		{	
+			if (attacker == targ)
+			{
+				tp4teamdmg = true; // don't take damage but still get stopped/bounced by weapon fire
+			}
+			else 
+			{
+				if (targ->in_play && (targ->invincible_sound < g_globalvars.time) && strneq(targteam, attackerteam))
+				{
+					sound(targ, CHAN_AUTO, "items/protect3.wav", 0.75, ATTN_NORM);
+					targ->invincible_sound = g_globalvars.time + 2;
+				}
+	
+				return;
+			}
 		}
 	}
-
-	// used by buttons and triggers to set activator for target firing
-	damage_attacker = attacker;
-	damage_inflictor = inflictor;
-
-	attackerteam = getteam(attacker);
-	targteam = getteam(targ);
 
 	if ((int)cvar("k_midair"))
 	{
@@ -513,7 +526,9 @@ void T_Damage(gedict_t *targ, gedict_t *inflictor, gedict_t *attacker, float dam
 	if ((attacker->super_damage_finished > g_globalvars.time) && strneq(inflictor->classname, "door")
 			&& (dtSTOMP != targ->deathtype) && !midair)
 	{
-		damage *= (deathmatch == 4 ? 8 : 4); // in dmm4 quad is octa actually
+		// in dmm4 quad is octa actually, unless tot_mode_enabled(),
+		// then it's possible to set custom multiplier
+		damage *= (deathmatch != 4 ? 4 : tot_mode_enabled() ? FrogbotQuadMultiplier() : 8);
 	}
 
 	// ctf strength rune
